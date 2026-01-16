@@ -1,0 +1,21 @@
+▲ Next.js 16.1.2 (Turbopack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 15.0s
+  Running TypeScript ...
+Failed to compile.
+
+./src/scripts/seed-admin.ts:74:81
+Type error: Argument of type 'string | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+
+[0m [90m 72 |[39m         console[33m.[39mlog([32m`User already exists with ID: ${userId}`[39m)
+ [90m 73 |[39m         [90m// Reset password to ensure it matches what user asked[39m
+[31m[1m>[22m[39m[90m 74 |[39m         [36mconst[39m { error[33m:[39m updateError } [33m=[39m [36mawait[39m supabase[33m.[39mauth[33m.[39madmin[33m.[39mupdateUserById(userId[33m,[39m {
+ [90m    |[39m                                                                                 [31m[1m^[22m[39m
+ [90m 75 |[39m             password[33m:[39m [33mADMIN_PASSWORD[39m
+ [90m 76 |[39m         })
+ [90m 77 |[39m         [36mif[39m (updateError) console[33m.[39merror([32m"Could not update password:"[39m[33m,[39m updateError)[0m
+Next.js build worker exited with code: 1 and signal: null

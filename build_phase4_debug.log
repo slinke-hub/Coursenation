@@ -1,0 +1,25 @@
+▲ Next.js 16.1.2 (Turbopack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 10.3s
+  Running TypeScript ...
+Failed to compile.
+
+./src/app/(dashboard)/admin/users/page.tsx:26:27
+Type error: Type '(formData: FormData) => Promise<{ error: string; success?: undefined; } | { success: boolean; error?: undefined; }>' is not assignable to type 'string | ((formData: FormData) => void | Promise<void>) | undefined'.
+  Type '(formData: FormData) => Promise<{ error: string; success?: undefined; } | { success: boolean; error?: undefined; }>' is not assignable to type '(formData: FormData) => void | Promise<void>'.
+    Type 'Promise<{ error: string; success?: undefined; } | { success: boolean; error?: undefined; }>' is not assignable to type 'void | Promise<void>'.
+      Type 'Promise<{ error: string; success?: undefined; } | { success: boolean; error?: undefined; }>' is not assignable to type 'Promise<void>'.
+        Type '{ error: string; success?: undefined; } | { success: boolean; error?: undefined; }' is not assignable to type 'void'.
+          Type '{ error: string; success?: undefined; }' is not assignable to type 'void'.
+
+[0m [90m 24 |[39m                 [33m<[39m[33m/[39m[33mCardHeader[39m[33m>[39m
+ [90m 25 |[39m                 [33m<[39m[33mCardContent[39m[33m>[39m
+[31m[1m>[22m[39m[90m 26 |[39m                     [33m<[39m[33mform[39m action[33m=[39m{createUser} className[33m=[39m[32m"flex gap-4 items-end flex-wrap"[39m[33m>[39m
+ [90m    |[39m                           [31m[1m^[22m[39m
+ [90m 27 |[39m                         [33m<[39m[33mdiv[39m className[33m=[39m[32m"space-y-2"[39m[33m>[39m
+ [90m 28 |[39m                             [33m<[39m[33mInput[39m name[33m=[39m[32m"email"[39m placeholder[33m=[39m[32m"Email"[39m required [33m/[39m[33m>[39m
+ [90m 29 |[39m                         [33m<[39m[33m/[39m[33mdiv[39m[33m>[39m[0m
+Next.js build worker exited with code: 1 and signal: null

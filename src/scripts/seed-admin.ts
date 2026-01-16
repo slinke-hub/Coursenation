@@ -70,12 +70,14 @@ async function seedAdmin() {
         // Let's verify and upsert profile to be safe.
     } else {
         console.log(`User already exists with ID: ${userId}`)
-        // Reset password to ensure it matches what user asked
-        const { error: updateError } = await supabase.auth.admin.updateUserById(userId, {
-            password: ADMIN_PASSWORD
-        })
-        if (updateError) console.error("Could not update password:", updateError)
-        else console.log("Password updated/verified.")
+        if (userId) {
+            // Reset password to ensure it matches what user asked
+            const { error: updateError } = await supabase.auth.admin.updateUserById(userId, {
+                password: ADMIN_PASSWORD
+            })
+            if (updateError) console.error("Could not update password:", updateError)
+            else console.log("Password updated/verified.")
+        }
     }
 
     if (userId) {
