@@ -64,7 +64,7 @@ export async function createUser(formData: FormData) {
         if (insertError) return { error: insertError.message }
     }
 
-    revalidatePath('/dashboard/admin/users')
+    revalidatePath('/admin/users')
     return { success: true }
 }
 
@@ -76,6 +76,6 @@ export async function deleteUser(userId: string) {
 
     if (error) return { error: error.message }
 
-    revalidatePath('/dashboard/admin/users')
+    revalidatePath('/admin/users')
     return { success: true }
 }

@@ -8,22 +8,22 @@ import { useUserStore } from '@/store/useUser'
 import { Button } from '@/components/ui/button'
 
 const studentLinks = [
-    { href: '/dashboard/student', label: 'Home', icon: Home },
-    { href: '/dashboard/student/courses', label: 'Courses', icon: BookOpen },
-    { href: '/dashboard/student/profile', label: 'Profile', icon: Users },
-    { href: '/dashboard/student/leaderboard', label: 'Leaderboard', icon: Trophy },
+    { href: '/student', label: 'Home', icon: Home },
+    { href: '/student/courses', label: 'Courses', icon: BookOpen },
+    { href: '/student/profile', label: 'Profile', icon: Users },
+    { href: '/student/leaderboard', label: 'Leaderboard', icon: Trophy },
 ]
 
 const teacherLinks = [
-    { href: '/dashboard/teacher', label: 'Dashboard', icon: Home },
-    { href: '/dashboard/teacher/courses', label: 'My Courses', icon: BookOpen },
-    { href: '/dashboard/teacher/analytics', label: 'Analytics', icon: Trophy },
+    { href: '/teacher', label: 'Dashboard', icon: Home },
+    { href: '/teacher/courses', label: 'My Courses', icon: BookOpen },
+    { href: '/teacher/analytics', label: 'Analytics', icon: Trophy },
 ]
 
 const adminLinks = [
-    { href: '/dashboard/admin', label: 'Overview', icon: Shield },
-    { href: '/dashboard/admin/users', label: 'Users', icon: Users },
-    { href: '/dashboard/admin/settings', label: 'Settings', icon: Settings },
+    { href: '/admin', label: 'Overview', icon: Shield },
+    { href: '/admin/users', label: 'Users', icon: Users },
+    { href: '/admin/settings', label: 'Settings', icon: Settings },
 ]
 
 export function Sidebar() {

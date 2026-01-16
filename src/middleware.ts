@@ -37,14 +37,15 @@ export async function middleware(request: NextRequest) {
     } = await supabase.auth.getUser()
 
     // Protected Routes Logic
-    if (request.nextUrl.pathname.startsWith('/dashboard') && !user) {
+    const protectedPaths = ['/student', '/teacher', '/admin']
+    if (protectedPaths.some(path => request.nextUrl.pathname.startsWith(path)) && !user) {
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
     // Redirect to dashboard if already logged in and trying to access login
     if (request.nextUrl.pathname === '/login' && user) {
         // Default to student, role based redirection can happen on the dashboard page or here if we fetch profile
-        return NextResponse.redirect(new URL('/dashboard/student', request.url))
+        return NextResponse.redirect(new URL('/student', request.url))
     }
 
     return response

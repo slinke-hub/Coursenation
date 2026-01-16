@@ -39,7 +39,7 @@ export default function LoginPage() {
                     password,
                 })
                 if (error) throw error
-                router.push('/dashboard/student')
+                router.push('/student')
                 router.refresh()
             }
         } catch (err: any) {

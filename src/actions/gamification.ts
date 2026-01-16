@@ -28,7 +28,7 @@ export async function awardXP(amount: number) {
 
     if (error) return { error: error.message }
 
-    revalidatePath('/dashboard')
+    revalidatePath('/student')
     return { success: true, newXP }
 }
 
@@ -59,6 +59,6 @@ export async function updateStreak() {
 
     if (error) return { error: error.message }
 
-    revalidatePath('/dashboard')
+    revalidatePath('/student')
     return { success: true, newStreak }
 }
