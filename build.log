@@ -1,0 +1,34 @@
+▲ Next.js 16.1.2 (Turbopack)
+
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 1 errors:
+./src/store/useUser.ts:1:1
+Module not found: Can't resolve 'zustand'
+[0m[31m[1m>[22m[39m[90m 1 |[39m [36mimport[39m { create } [36mfrom[39m [32m'zustand'[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 2 |[39m
+ [90m 3 |[39m [36minterface[39m [33mUserState[39m {
+ [90m 4 |[39m     xp[33m:[39m number[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/store/useUser.ts [Client Component Browser]
+    ./src/components/layout/Sidebar.tsx [Client Component Browser]
+    ./src/components/layout/Sidebar.tsx [Server Component]
+    ./src/app/(dashboard)/layout.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/store/useUser.ts [Client Component SSR]
+    ./src/components/layout/Sidebar.tsx [Client Component SSR]
+    ./src/components/layout/Sidebar.tsx [Server Component]
+    ./src/app/(dashboard)/layout.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./src/store/useUser.ts:1:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
