@@ -1,0 +1,20 @@
+▲ Next.js 16.1.2 (Turbopack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+✓ Compiled successfully in 4.8s
+  Running TypeScript ...
+Failed to compile.
+
+./src/components/learning/Flashcard.tsx:37:50
+Type error: Type 'string' is not assignable to type 'ValueTransition'.
+
+[0m [90m 35 |[39m                     initial[33m=[39m{[36mfalse[39m}
+ [90m 36 |[39m                     animate[33m=[39m{{ rotateY[33m:[39m isFlipped [33m?[39m [35m180[39m [33m:[39m [35m0[39m }}
+[31m[1m>[22m[39m[90m 37 |[39m                     transition[33m=[39m{{ duration[33m:[39m [35m0.6[39m[33m,[39m animationDirection[33m:[39m [32m"normal"[39m }}
+ [90m    |[39m                                                  [31m[1m^[22m[39m
+ [90m 38 |[39m                     style[33m=[39m{{ transformStyle[33m:[39m [32m'preserve-3d'[39m }}
+ [90m 39 |[39m                 [33m>[39m
+ [90m 40 |[39m                     {[90m/* FRONT */[39m}[0m
+Next.js build worker exited with code: 1 and signal: null

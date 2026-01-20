@@ -11,6 +11,7 @@ const studentLinks = [
     { href: '/student', label: 'Home', icon: Home },
     { href: '/student/courses', label: 'Courses', icon: BookOpen },
     { href: '/student/profile', label: 'Profile', icon: Users },
+    { href: '/student/practice', label: 'Practice', icon: BookOpen }, // Using BookOpen temporarily or maybe Zap/Brain
     { href: '/student/leaderboard', label: 'Leaderboard', icon: Trophy },
 ]
 

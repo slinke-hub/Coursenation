@@ -2,6 +2,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Play } from "lucide-react"
+import Image from "next/image"
 
 interface CourseCardProps {
     title: string
@@ -10,12 +11,23 @@ interface CourseCardProps {
     image?: string
 }
 
-export function CourseCard({ title, description, progress }: CourseCardProps) {
+export function CourseCard({ title, description, progress, image }: CourseCardProps) {
     return (
-        <Card className="overflow-hidden border-border bg-card transition-all hover:border-primary/50">
+        <Card className="overflow-hidden border-border bg-card transition-all hover:border-primary/50 h-full flex flex-col">
             <div className="aspect-video bg-muted relative group">
-                {/* Image placeholder */}
-                <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
+                {image ? (
+                    <Image
+                        src={image}
+                        alt={title}
+                        fill
+                        className="object-cover transition-transform group-hover:scale-105"
+                    />
+                ) : (
+                    <div className="w-full h-full bg-secondary flex items-center justify-center">
+                        <span className="text-4xl">📚</span>
+                    </div>
+                )}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors z-10">
                     <Play className="h-12 w-12 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
                 </div>
             </div>
