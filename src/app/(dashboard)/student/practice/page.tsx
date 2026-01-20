@@ -8,6 +8,8 @@ import { awardXP } from '@/actions/gamification'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { QuizGame } from "@/components/learning/QuizGame"
 
 // Mock Data - In real app, fetch from Supabase
 const mockCards = [
@@ -38,21 +40,6 @@ export default function PracticePage() {
         }
     }
 
-    if (completed) {
-        return (
-            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center animate-in zoom-in duration-500">
-                <h1 className="text-4xl font-bold text-primary">Session Complete!</h1>
-                <p className="text-xl text-muted-foreground">You earned <span className="text-primary font-bold">50 XP</span></p>
-                <div className="flex gap-4">
-                    <Link href="/student">
-                        <Button variant="outline">Back to Dashboard</Button>
-                    </Link>
-                    <Button onClick={() => window.location.reload()}>Practice Again</Button>
-                </div>
-            </div>
-        )
-    }
-
     return (
         <div className="max-w-2xl mx-auto space-y-8 py-8">
             <div className="flex items-center gap-4">
@@ -60,21 +47,45 @@ export default function PracticePage() {
                     <Button variant="ghost" size="icon"><ArrowLeft /></Button>
                 </Link>
                 <div className="flex-1">
-                    <div className="flex justify-between mb-2 text-sm text-muted-foreground">
-                        <span>Progress</span>
-                        <span>{currentIndex + 1} / {mockCards.length}</span>
-                    </div>
-                    <Progress value={progress} className="h-2" />
+                    <h1 className="text-2xl font-bold">Practice Arena</h1>
                 </div>
             </div>
 
-            <div className="mt-12">
-                <Flashcard
-                    key={currentCard.id} // Key ensures component resets on change
-                    {...currentCard}
-                    onNext={handleNext}
-                />
-            </div>
+            <Tabs defaultValue="flashcards" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="flashcards">Flashcards</TabsTrigger>
+                    <TabsTrigger value="quiz">Speed Quiz</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="flashcards" className="mt-6 space-y-8">
+                    {completed ? (
+                        <div className="flex flex-col items-center justify-center min-h-[50vh] gap-6 text-center animate-in zoom-in duration-500">
+                            <h1 className="text-4xl font-bold text-primary">Session Complete!</h1>
+                            <p className="text-xl text-muted-foreground">You earned <span className="text-primary font-bold">50 XP</span></p>
+                            <Button onClick={() => window.location.reload()}>Practice Again</Button>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="flex justify-between mb-2 text-sm text-muted-foreground">
+                                <span>Progress</span>
+                                <span>{currentIndex + 1} / {mockCards.length}</span>
+                            </div>
+                            <Progress value={progress} className="h-2" />
+                            <div className="mt-12">
+                                <Flashcard
+                                    key={currentCard.id}
+                                    {...currentCard}
+                                    onNext={handleNext}
+                                />
+                            </div>
+                        </>
+                    )}
+                </TabsContent>
+
+                <TabsContent value="quiz" className="mt-6">
+                    <QuizGame />
+                </TabsContent>
+            </Tabs>
         </div>
     )
 }
