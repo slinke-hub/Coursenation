@@ -112,3 +112,98 @@ create policy "Everyone can read chat messages"
 create policy "Authenticated users can post messages"
     on chat_messages for insert
     with check (auth.uid() = user_id);
+
+-- Create Modules Table
+create table modules (
+  id uuid default gen_random_uuid() primary key,
+  course_id uuid references courses(id) on delete cascade not null,
+  title text not null,
+  sort_order integer default 0,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table modules enable row level security;
+
+create policy "Modules are viewable by everyone."
+  on modules for select using ( true );
+
+create policy "Instructors can insert modules."
+  on modules for insert
+  with check (
+      exists (
+          select 1 from courses
+          where courses.id = modules.course_id
+          and courses.instructor_id = auth.uid()
+      )
+  );
+
+create policy "Instructors can update their modules."
+  on modules for update
+  using (
+      exists (
+          select 1 from courses
+          where courses.id = modules.course_id
+          and courses.instructor_id = auth.uid()
+      )
+  );
+
+create policy "Instructors can delete their modules."
+  on modules for delete
+  using (
+      exists (
+          select 1 from courses
+          where courses.id = modules.course_id
+          and courses.instructor_id = auth.uid()
+      )
+  );
+
+-- Create Lessons Table
+create table lessons (
+  id uuid default gen_random_uuid() primary key,
+  module_id uuid references modules(id) on delete cascade not null,
+  title text not null,
+  content text,
+  video_id text, -- YouTube ID
+  duration text,
+  is_locked boolean default true,
+  sort_order integer default 0,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+alter table lessons enable row level security;
+
+create policy "Lessons are viewable by everyone."
+  on lessons for select using ( true );
+
+create policy "Instructors can insert lessons."
+  on lessons for insert
+  with check (
+      exists (
+          select 1 from modules
+          join courses on modules.course_id = courses.id
+          where modules.id = lessons.module_id
+          and courses.instructor_id = auth.uid()
+      )
+  );
+
+create policy "Instructors can update their lessons."
+  on lessons for update
+  using (
+      exists (
+          select 1 from modules
+          join courses on modules.course_id = courses.id
+          where modules.id = lessons.module_id
+          and courses.instructor_id = auth.uid()
+      )
+  );
+
+create policy "Instructors can delete their lessons."
+  on lessons for delete
+  using (
+      exists (
+          select 1 from modules
+          join courses on modules.course_id = courses.id
+          where modules.id = lessons.module_id
+          and courses.instructor_id = auth.uid()
+      )
+  );
