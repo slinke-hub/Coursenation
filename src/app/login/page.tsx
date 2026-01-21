@@ -94,6 +94,7 @@ export default function LoginPage() {
                 router.refresh()
             }
         } catch (err: any) {
+            console.error("Auth Error:", err)
             setError(err.message)
         } finally {
             setLoading(false)
@@ -110,7 +111,7 @@ export default function LoginPage() {
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-background p-4 py-8">
-            <Card className="w-full max-w-md border-border bg-card shadow-lg my-8">
+            <Card className="w-full max-w-md border-2 border-border/50 shadow-xl my-8">
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl font-bold text-center text-primary">
                         {mode === 'signin' ? 'Welcome Back to Coursenation' : 'Create Account'}
@@ -135,6 +136,7 @@ export default function LoginPage() {
                                         value={fullName}
                                         onChange={e => setFullName(e.target.value)}
                                         required
+                                        className="border-primary/20"
                                     />
                                 </div>
 
@@ -226,11 +228,11 @@ export default function LoginPage() {
                                         <span className="text-sm font-medium">Security Check</span>
                                     </div>
                                     <div className="flex items-center gap-4">
-                                        <span className="text-lg font-mono font-bold bg-white dark:bg-black px-3 py-1 rounded border">
+                                        <span className="text-lg font-mono font-bold bg-white text-black px-3 py-1 rounded border-2 border-primary/20">
                                             {captcha.a} + {captcha.b} = ?
                                         </span>
                                         <Input
-                                            className="w-20"
+                                            className="w-20 border-primary/20"
                                             placeholder="?"
                                             value={captchaAnswer}
                                             onChange={e => setCaptchaAnswer(e.target.value)}
