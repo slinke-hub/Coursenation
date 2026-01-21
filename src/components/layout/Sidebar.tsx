@@ -40,7 +40,7 @@ export function Sidebar() {
         <aside className="hidden w-64 flex-col border-r bg-card/50 backdrop-blur md:flex h-full">
             <div className="p-6 flex items-center gap-2">
                 <Gamepad2 className="h-6 w-6 text-primary" />
-                <h2 className="text-2xl font-bold tracking-tight text-primary">LingoQuest</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-primary">Coursenation</h2>
             </div>
 
             <nav className="flex-1 space-y-2 p-4">
