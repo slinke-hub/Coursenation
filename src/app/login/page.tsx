@@ -5,40 +5,54 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useRouter } from 'next/navigation'
-import { LogIn, UserPlus } from 'lucide-react'
+import { LogIn, UserPlus, RefreshCw, ShieldCheck } from 'lucide-react'
+import { Checkbox } from "@/components/ui/checkbox"
 
 export default function LoginPage() {
+    // Mode
     const [mode, setMode] = useState<'signin' | 'signup'>('signin')
 
-    // Auth State
+    // Form Fields
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
-    // Signup Extra State
+    // Sign Up Extras
     const [fullName, setFullName] = useState('')
     const [phone, setPhone] = useState('')
-    const [gender, setGender] = useState('other')
-    const [country, setCountry] = useState('')
+    const [gender, setGender] = useState('')
+    const [country, setCountry] = useState('Detecting...')
     const [confirmPassword, setConfirmPassword] = useState('')
-    const [isHuman, setIsHuman] = useState(false)
 
+    // Captcha
+    const [captcha, setCaptcha] = useState({ a: 0, b: 0 })
+    const [captchaAnswer, setCaptchaAnswer] = useState('')
+    const [captchaVerified, setCaptchaVerified] = useState(false)
+
+    // State
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const router = useRouter()
     const supabase = createClient()
 
-    // Auto-detect country
+    // Auto-detect country & Init Captcha
     useEffect(() => {
-        if (mode === 'signup') {
-            fetch('https://ipapi.co/json/')
-                .then(res => res.json())
-                .then(data => {
-                    if (data.country_name) setCountry(data.country_name)
-                })
-                .catch(() => console.log('Could not detect country'))
-        }
-    }, [mode])
+        // Init Captcha
+        setCaptcha({
+            a: Math.floor(Math.random() * 10) + 1,
+            b: Math.floor(Math.random() * 10) + 1
+        })
+
+        // Detect Country
+        fetch('https://ipapi.co/json/')
+            .then(res => res.json())
+            .then(data => {
+                if (data.country_name) setCountry(data.country_name)
+                else setCountry('Unknown')
+            })
+            .catch(() => setCountry('Unknown'))
+    }, [])
 
     const handleAuth = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -49,8 +63,9 @@ export default function LoginPage() {
             if (mode === 'signup') {
                 // Validation
                 if (password !== confirmPassword) throw new Error("Passwords do not match")
-                if (!isHuman) throw new Error("Please confirm you are not a robot")
+                if (parseInt(captchaAnswer) !== (captcha.a + captcha.b)) throw new Error("Incorrect CAPTCHA answer")
                 if (!fullName) throw new Error("Full Name is required")
+                if (!gender) throw new Error("Gender is required")
 
                 const { error } = await supabase.auth.signUp({
                     email,
@@ -59,17 +74,17 @@ export default function LoginPage() {
                         emailRedirectTo: `${location.origin}/auth/callback`,
                         data: {
                             full_name: fullName,
-                            phone,
-                            gender,
-                            country,
-                            username: email.split('@')[0] // Fallback username
+                            phone: phone,
+                            gender: gender,
+                            country: country
                         }
                     },
                 })
                 if (error) throw error
-                // In a real app we might wait for email verify, but Supabase might auto-login on dev if disabled
-                alert('Account created! Please check your email to verify.')
+                setError(null)
+                alert('Success! Check your email for the confirmation link to complete registration.')
             } else {
+                // Sign In
                 const { error } = await supabase.auth.signInWithPassword({
                     email,
                     password,
@@ -85,18 +100,17 @@ export default function LoginPage() {
         }
     }
 
-    const handleOAuth = async (provider: 'google') => {
-        await supabase.auth.signInWithOAuth({
-            provider,
-            options: {
-                redirectTo: `${location.origin}/auth/callback`,
-            },
+    const refreshCaptcha = () => {
+        setCaptcha({
+            a: Math.floor(Math.random() * 10) + 1,
+            b: Math.floor(Math.random() * 10) + 1
         })
+        setCaptchaAnswer('')
     }
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-background p-4 py-8">
-            <Card className="w-full max-w-lg border-border bg-card">
+            <Card className="w-full max-w-md border-border bg-card shadow-lg my-8">
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl font-bold text-center text-primary">
                         {mode === 'signin' ? 'Welcome Back' : 'Create Account'}
@@ -104,62 +118,61 @@ export default function LoginPage() {
                     <CardDescription className="text-center">
                         {mode === 'signin'
                             ? 'Enter your credentials to access your portal'
-                            : 'Join our community of learners today'}
+                            : 'Join Coursenation today'}
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {mode === 'signin' && (
-                        <div className="space-y-2">
-                            <Button variant="outline" className="w-full" onClick={() => handleOAuth('google')}>
-                                Continue with Google
-                            </Button>
-                            <div className="relative">
-                                <div className="absolute inset-0 flex items-center">
-                                    <span className="w-full border-t border-muted" />
-                                </div>
-                                <div className="relative flex justify-center text-xs uppercase">
-                                    <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
                     <form onSubmit={handleAuth} className="space-y-4">
-                        {/* Signup Fields */}
+
+                        {/* Sign Up Specific Fields */}
                         {mode === 'signup' && (
                             <>
                                 <div className="space-y-2">
-                                    <Label htmlFor="fullName">Full Name</Label>
-                                    <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} required placeholder="John Doe" />
+                                    <Label htmlFor="fullname">Full Name</Label>
+                                    <Input
+                                        id="fullname"
+                                        placeholder="John Doe"
+                                        value={fullName}
+                                        onChange={e => setFullName(e.target.value)}
+                                        required
+                                    />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label htmlFor="phone">Phone Number</Label>
-                                        <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 234..." />
+                                        <Input
+                                            id="phone"
+                                            type="tel"
+                                            placeholder="+1234567890"
+                                            value={phone}
+                                            onChange={e => setPhone(e.target.value)}
+                                            required
+                                        />
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="country">Country (Detected)</Label>
-                                        <Input id="country" value={country} onChange={(e) => setCountry(e.target.value)} placeholder="Auto-detecting..." readOnly className="bg-muted" />
+                                        <Label htmlFor="gender">Gender</Label>
+                                        <Select onValueChange={setGender} required>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="male">Male</SelectItem>
+                                                <SelectItem value="female">Female</SelectItem>
+                                                <SelectItem value="other">Other</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Gender</Label>
-                                    <div className="flex gap-4">
-                                        <label className="flex items-center space-x-2">
-                                            <input type="radio" checked={gender === 'male'} onChange={() => setGender('male')} className="accent-primary" />
-                                            <span>Male</span>
-                                        </label>
-                                        <label className="flex items-center space-x-2">
-                                            <input type="radio" checked={gender === 'female'} onChange={() => setGender('female')} className="accent-primary" />
-                                            <span>Female</span>
-                                        </label>
-                                        <label className="flex items-center space-x-2">
-                                            <input type="radio" checked={gender === 'other'} onChange={() => setGender('other')} className="accent-primary" />
-                                            <span>Prefer not to say</span>
-                                        </label>
-                                    </div>
+                                    <Label htmlFor="country">Country (Auto-detected)</Label>
+                                    <Input
+                                        id="country"
+                                        value={country}
+                                        readOnly
+                                        className="bg-muted text-muted-foreground cursor-not-allowed"
+                                    />
                                 </div>
                             </>
                         )}
@@ -167,37 +180,71 @@ export default function LoginPage() {
                         {/* Common Fields */}
                         <div className="space-y-2">
                             <Label htmlFor="email">Email</Label>
-                            <Input id="email" type="email" placeholder="m@example.com" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                            <Input
+                                id="email"
+                                type="email"
+                                placeholder="m@example.com"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
                         </div>
 
                         <div className="space-y-2">
                             <Label htmlFor="password">Password</Label>
-                            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                            <Input
+                                id="password"
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
+                                minLength={6}
+                            />
                         </div>
 
-                        {/* Confirm Password */}
                         {mode === 'signup' && (
-                            <div className="space-y-2">
-                                <Label htmlFor="confirmPassword">Confirm Password</Label>
-                                <Input id="confirmPassword" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required />
-                            </div>
+                            <>
+                                <div className="space-y-2">
+                                    <Label htmlFor="confirmPassword">Confirm Password</Label>
+                                    <Input
+                                        id="confirmPassword"
+                                        type="password"
+                                        value={confirmPassword}
+                                        onChange={(e) => setConfirmPassword(e.target.value)}
+                                        required
+                                        className={confirmPassword && password !== confirmPassword ? "border-destructive" : ""}
+                                    />
+                                    {confirmPassword && password !== confirmPassword && (
+                                        <p className="text-xs text-destructive">Passwords do not match</p>
+                                    )}
+                                </div>
+
+                                {/* Robot Check */}
+                                <div className="p-4 bg-muted/30 rounded-lg border border-border space-y-3">
+                                    <div className="flex items-center gap-2">
+                                        <ShieldCheck className="h-4 w-4 text-primary" />
+                                        <span className="text-sm font-medium">Security Check</span>
+                                    </div>
+                                    <div className="flex items-center gap-4">
+                                        <span className="text-lg font-mono font-bold bg-white dark:bg-black px-3 py-1 rounded border">
+                                            {captcha.a} + {captcha.b} = ?
+                                        </span>
+                                        <Input
+                                            className="w-20"
+                                            placeholder="?"
+                                            value={captchaAnswer}
+                                            onChange={e => setCaptchaAnswer(e.target.value)}
+                                            required
+                                        />
+                                        <Button type="button" variant="ghost" size="icon" onClick={refreshCaptcha} title="New Challenge">
+                                            <RefreshCw className="h-4 w-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+                            </>
                         )}
 
-                        {/* Captcha */}
-                        {mode === 'signup' && (
-                            <div className="flex items-center space-x-2 p-4 border rounded-md bg-muted/20">
-                                <input
-                                    type="checkbox"
-                                    id="captcha"
-                                    checked={isHuman}
-                                    onChange={(e) => setIsHuman(e.target.checked)}
-                                    className="h-5 w-5 accent-primary cursor-pointer"
-                                />
-                                <Label htmlFor="captcha" className="cursor-pointer">I am not a robot</Label>
-                            </div>
-                        )}
-
-                        {error && <p className="text-sm text-destructive font-medium">{error}</p>}
+                        {error && <p className="text-sm text-destructive font-bold text-center bg-destructive/10 p-2 rounded">{error}</p>}
 
                         <Button className="w-full" type="submit" disabled={loading}>
                             {loading ? (
@@ -215,7 +262,10 @@ export default function LoginPage() {
                     </form>
                 </CardContent>
                 <CardFooter className="justify-center">
-                    <Button variant="link" onClick={() => setMode(mode === 'signin' ? 'signup' : 'signin')}>
+                    <Button variant="link" onClick={() => {
+                        setMode(mode === 'signin' ? 'signup' : 'signin')
+                        setError(null)
+                    }}>
                         {mode === 'signin' ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
                     </Button>
                 </CardFooter>
