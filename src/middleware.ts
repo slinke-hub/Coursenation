@@ -2,16 +2,17 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+    // 1. Initialize Response
     let response = NextResponse.next({
         request: {
             headers: request.headers,
         },
     })
 
-    // Refresh session if expired - required for Server Components
+    // 2. Refresh Session
     const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder',
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
         {
             cookies: {
                 getAll() {
@@ -32,20 +33,32 @@ export async function middleware(request: NextRequest) {
         }
     )
 
+    // 2. Check Auth
     const {
         data: { user },
     } = await supabase.auth.getUser()
 
-    // Protected Routes Logic
+    // 3. Protected Routes
+    const path = request.nextUrl.pathname
+
+    // Explicitly exclude static files/assets from any logic if matcher misses them
+    if (path.includes('.')) return NextResponse.next()
+
     const protectedPaths = ['/student', '/teacher', '/admin']
-    if (protectedPaths.some(path => request.nextUrl.pathname.startsWith(path)) && !user) {
+
+    if (protectedPaths.some(p => path.startsWith(p)) && !user) {
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
-    // Redirect to dashboard if already logged in and trying to access login
-    if (request.nextUrl.pathname === '/login' && user) {
-        // Default to student, role based redirection can happen on the dashboard page or here if we fetch profile
-        return NextResponse.redirect(new URL('/student', request.url))
+    // 4. Redirect logged-in users away from auth pages
+    if ((path === '/login' || path === '/') && user) {
+        // Redirect based on role (simple check)
+        // Access profile? For middleware speed, we trust the metadata or default to student
+        // But we don't have metadata easily here without a DB call.
+        // Let's just default to student for now.
+        if (path === '/login') {
+            return NextResponse.redirect(new URL('/student', request.url))
+        }
     }
 
     return response
@@ -58,7 +71,7 @@ export const config = {
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
-         * Feel free to modify this pattern to include more paths.
+         * - public folder references
          */
         '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
     ],
