@@ -79,3 +79,17 @@ export async function deleteUser(userId: string) {
     revalidatePath('/admin/users')
     return { success: true }
 }
+
+export async function updateUserRole(userId: string, newRole: string) {
+    const supabase = getAdminClient()
+
+    const { error } = await supabase
+        .from('profiles')
+        .update({ role: newRole })
+        .eq('id', userId)
+
+    if (error) return { error: error.message }
+
+    revalidatePath('/admin/users')
+    return { success: true }
+}
