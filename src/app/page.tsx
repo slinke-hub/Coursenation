@@ -15,12 +15,6 @@ export default function Home() {
         <Link href="/login">
           <Button size="lg" className="text-lg">Start Learning</Button>
         </Link>
-        <Link href="/login">
-          <Button variant="outline" size="lg">Teacher Portal</Button>
-        </Link>
-        <Link href="/login">
-          <Button variant="ghost" size="lg">Admin</Button>
-        </Link>
       </div>
     </main>
   )
