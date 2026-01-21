@@ -12,13 +12,13 @@ export default function Home() {
       </div>
 
       <div className="mt-12 flex gap-4">
-        <Link href="/student">
+        <Link href="/login">
           <Button size="lg" className="text-lg">Start Learning</Button>
         </Link>
-        <Link href="/teacher">
+        <Link href="/login">
           <Button variant="outline" size="lg">Teacher Portal</Button>
         </Link>
-        <Link href="/admin">
+        <Link href="/login">
           <Button variant="ghost" size="lg">Admin</Button>
         </Link>
       </div>

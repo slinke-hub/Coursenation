@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { Home, BookOpen, Trophy, Users, Settings, LogOut, Shield, Gamepad2, BarChart, Megaphone, ClipboardCheck, Calendar } from 'lucide-react'
 import { useUserStore } from '@/store/useUser'
 import { Button } from '@/components/ui/button'
+import { createClient } from '@/utils/supabase/client'
 
 const studentLinks = [
     { href: '/student', label: 'Home', icon: Home },
@@ -35,6 +36,12 @@ export function Sidebar() {
     const { role, setRole } = useUserStore()
 
     const links = role === 'teacher' ? teacherLinks : role === 'admin' ? adminLinks : studentLinks
+
+    const handleLogout = async () => {
+        const supabase = createClient()
+        await supabase.auth.signOut()
+        window.location.href = '/' // Force reload to clear client state
+    }
 
     return (
         <aside className="hidden w-64 flex-col border-r bg-card/50 backdrop-blur md:flex h-full">
@@ -66,19 +73,30 @@ export function Sidebar() {
                 })}
             </nav>
 
-            {/* Dev Tool: Role Switcher */}
-            <div className="p-4 border-t border-border">
-                <p className="text-xs text-muted-foreground mb-2">Dev: Switch Role</p>
-                <div className="flex gap-2 justify-between">
-                    <Button variant="ghost" size="icon" onClick={() => setRole('student')} title="Student" className={role === 'student' || !role ? 'text-primary' : ''}>
-                        <Users className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => setRole('teacher')} title="Teacher" className={role === 'teacher' ? 'text-primary' : ''}>
-                        <BookOpen className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon" onClick={() => setRole('admin')} title="Admin" className={role === 'admin' ? 'text-primary' : ''}>
-                        <Shield className="h-4 w-4" />
-                    </Button>
+            <div className="p-4 border-t border-border space-y-4">
+                <Button
+                    variant="ghost"
+                    className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10"
+                    onClick={handleLogout}
+                >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log Out
+                </Button>
+
+                {/* Dev Tool: Role Switcher */}
+                <div>
+                    <p className="text-xs text-muted-foreground mb-2">Dev: Switch Role</p>
+                    <div className="flex gap-2 justify-between">
+                        <Button variant="ghost" size="icon" onClick={() => setRole('student')} title="Student" className={role === 'student' || !role ? 'text-primary' : ''}>
+                            <Users className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => setRole('teacher')} title="Teacher" className={role === 'teacher' ? 'text-primary' : ''}>
+                            <BookOpen className="h-4 w-4" />
+                        </Button>
+                        <Button variant="ghost" size="icon" onClick={() => setRole('admin')} title="Admin" className={role === 'admin' ? 'text-primary' : ''}>
+                            <Shield className="h-4 w-4" />
+                        </Button>
+                    </div>
                 </div>
             </div>
         </aside>
