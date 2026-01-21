@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Flame, Zap, Trophy, Medal, Star, Target, CalendarDays } from "lucide-react"
 import { XPChart } from "@/components/profile/XPChart"
+import { ProfileTabs } from "@/components/profile/ProfileTabs"
 
 async function getProfile() {
     const supabase = await createClient()
@@ -18,13 +19,14 @@ async function getProfile() {
         .eq('id', user.id)
         .single()
 
-    return { ...profile, email: user.email }
+    return { profile: { ...profile, email: user.email }, user }
 }
 
 export default async function ProfilePage() {
-    const profile = await getProfile()
+    const data = await getProfile()
 
-    if (!profile) return <div>Please log in</div>
+    if (!data) return <div>Please log in</div>
+    const { profile, user } = data
 
     // Calculate Level
     const currentXP = profile.xp || 0
@@ -57,9 +59,8 @@ export default async function ProfilePage() {
         year: 'numeric'
     })
 
-    return (
-        <div className="space-y-8 max-w-5xl mx-auto p-4 md:p-8">
-
+    const OverviewContent = (
+        <>
             {/* Header / Identity */}
             <div className="flex flex-col md:flex-row items-center gap-6 p-6 bg-card border border-border rounded-xl shadow-sm">
                 <Avatar className="h-24 w-24 border-4 border-primary/20">
@@ -157,7 +158,12 @@ export default async function ProfilePage() {
                     ))}
                 </div>
             </div>
+        </>
+    )
+
+    return (
+        <div className="space-y-8 max-w-5xl mx-auto p-4 md:p-8">
+            <ProfileTabs user={user} overviewContent={OverviewContent} />
         </div>
     )
 }
-

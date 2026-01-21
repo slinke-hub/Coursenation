@@ -92,14 +92,37 @@ export async function updateLesson(lessonId: string, courseId: string, data: { t
     return { success: true }
 }
 
-export async function deleteLesson(lessonId: string, courseId: string) {
+export async function getEnrolledCourses() {
     const supabase = await createClient()
-    const { error } = await supabase
-        .from('lessons')
-        .delete()
-        .eq('id', lessonId)
+    const { data: { user } } = await supabase.auth.getUser()
 
-    if (error) return { error: error.message }
-    revalidatePath(`/teacher/courses/${courseId}/edit`)
-    return { success: true }
+    if (!user) return []
+
+    // Join user_progress with courses to get enrolled course details
+    const { data, error } = await supabase
+        .from('user_progress')
+        .select(`
+            progress,
+            completed,
+            last_accessed,
+            course:courses (
+                id,
+                title,
+                description,
+                thumbnail_url,
+                instructor:profiles(username)
+            )
+        `)
+        .eq('user_id', user.id)
+
+    if (error) {
+        console.error("Error fetching enrolled courses:", error)
+        return []
+    }
+
+    return data.map((item: any) => ({
+        ...item.course,
+        progress: item.progress,
+        completed: item.completed
+    }))
 }
