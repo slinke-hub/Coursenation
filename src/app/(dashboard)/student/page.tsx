@@ -6,6 +6,7 @@ import { StreakCounter } from "@/components/dashboard/StreakCounter"
 import { XPCard } from "@/components/dashboard/XPCard"
 import { awardXP } from "@/actions/gamification"
 import { Button } from "@/components/ui/button"
+import { AnnouncementsWidget } from "@/components/dashboard/AnnouncementsWidget"
 
 export default function StudentDashboard() {
     const { xp, streak } = useGamification()
@@ -18,6 +19,7 @@ export default function StudentDashboard() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <AnnouncementsWidget />
                 <XPCard xp={xp} />
                 <StreakCounter streak={streak} isActive={streak > 0} />
             </div>

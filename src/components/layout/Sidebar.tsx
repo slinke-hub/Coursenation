@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { Home, BookOpen, Trophy, Users, Settings, LogOut, Shield, Gamepad2, BarChart } from 'lucide-react'
+import { Home, BookOpen, Trophy, Users, Settings, LogOut, Shield, Gamepad2, BarChart, Megaphone, ClipboardCheck, Calendar } from 'lucide-react'
 import { useUserStore } from '@/store/useUser'
 import { Button } from '@/components/ui/button'
 
@@ -18,12 +18,15 @@ const studentLinks = [
 const teacherLinks = [
     { href: '/teacher', label: 'Dashboard', icon: Home },
     { href: '/teacher/courses', label: 'My Courses', icon: BookOpen },
+    { href: '/teacher/attendance', label: 'Attendance', icon: ClipboardCheck },
+    { href: '/teacher/calendar', label: 'Calendar', icon: Calendar },
     { href: '/teacher/analytics', label: 'Analytics', icon: BarChart },
 ]
 
 const adminLinks = [
     { href: '/admin', label: 'Overview', icon: Shield },
     { href: '/admin/users', label: 'Users', icon: Users },
+    { href: '/admin/announcements', label: 'Announcements', icon: Megaphone },
     { href: '/admin/settings', label: 'Settings', icon: Settings },
 ]
 
