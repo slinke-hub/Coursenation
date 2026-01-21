@@ -1,11 +1,21 @@
+"use client"
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
 
 export default function AdminSettingsPage() {
+    const handleSave = () => {
+        // Here you would typically call a server action or API to save the data
+        // For now, we just mock the success
+        toast.success("Preferences saved successfully!", {
+            description: "Your platform settings have been updated.",
+        })
+    }
+
     return (
         <div className="flex-1 space-y-4 p-8 pt-6">
             <div className="flex items-center justify-between space-y-2">
@@ -41,7 +51,7 @@ export default function AdminSettingsPage() {
                             <Input id="admin-email" defaultValue="support@lingoquest.com" />
                         </div>
                         <div className="flex items-center justify-between space-x-2 pt-2">
-                            <Button>Save Preferences</Button>
+                            <Button onClick={handleSave}>Save Preferences</Button>
                         </div>
                     </CardContent>
                 </Card>
