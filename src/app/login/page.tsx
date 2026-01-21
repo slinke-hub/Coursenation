@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useRouter } from 'next/navigation'
 import { LogIn, UserPlus, RefreshCw, ShieldCheck } from 'lucide-react'
-import { Checkbox } from "@/components/ui/checkbox"
+
 
 export default function LoginPage() {
     // Mode
@@ -113,7 +113,7 @@ export default function LoginPage() {
             <Card className="w-full max-w-md border-border bg-card shadow-lg my-8">
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl font-bold text-center text-primary">
-                        {mode === 'signin' ? 'Welcome Back' : 'Create Account'}
+                        {mode === 'signin' ? 'Welcome Back to Coursenation' : 'Create Account'}
                     </CardTitle>
                     <CardDescription className="text-center">
                         {mode === 'signin'
